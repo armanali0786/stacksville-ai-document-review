@@ -1,5 +1,6 @@
 import { SearchCheck } from 'lucide-react'
-import type { Finding, ReviewAgent } from '../types/review'
+import { getReview } from '../hooks/useReviewState'
+import type { Finding, ReviewAgent, ReviewState, ReviewStatus } from '../types/review'
 import { getLocationLabel, type ParagraphIndex, type ResolvedAnchor } from '../utils/annotations'
 import { FindingCard } from './FindingCard'
 
@@ -10,8 +11,11 @@ interface FindingListProps {
   agent: ReviewAgent
   paragraphs: ParagraphIndex
   anchors: Map<string, ResolvedAnchor>
+  reviewState: ReviewState
   selectedFindingId: string | null
   onSelect: (findingId: string) => void
+  onStatusChange: (findingId: string, status: ReviewStatus) => void
+  onCommentChange: (findingId: string, comment: string) => void
 }
 
 export function FindingList({
@@ -19,8 +23,11 @@ export function FindingList({
   agent,
   paragraphs,
   anchors,
+  reviewState,
   selectedFindingId,
   onSelect,
+  onStatusChange,
+  onCommentChange,
 }: FindingListProps) {
   return (
     <section className="finding-list" aria-labelledby="findings-heading">
@@ -49,8 +56,11 @@ export function FindingList({
                   finding={finding}
                   anchorStatus={anchor.status}
                   locationLabel={getLocationLabel(anchor, paragraphs)}
+                  review={getReview(reviewState, finding.id)}
                   isSelected={finding.id === selectedFindingId}
                   onSelect={onSelect}
+                  onStatusChange={onStatusChange}
+                  onCommentChange={onCommentChange}
                 />
               </li>
             )

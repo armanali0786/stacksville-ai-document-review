@@ -1,16 +1,24 @@
 import { FileWarning } from 'lucide-react'
-import type { Finding } from '../types/review'
+import { getReview } from '../hooks/useReviewState'
+import type { Finding, ReviewState } from '../types/review'
 import type { ResolvedAnchor } from '../utils/annotations'
 import { SeverityBadge } from './SeverityBadge'
 
 interface UnanchoredFindingsProps {
   findings: Finding[]
   anchors: Map<string, ResolvedAnchor>
+  reviewState: ReviewState
   selectedFindingId: string | null
   onSelect: (findingId: string) => void
 }
 
-export function UnanchoredFindings({ findings, anchors, selectedFindingId, onSelect }: UnanchoredFindingsProps) {
+export function UnanchoredFindings({
+  findings,
+  anchors,
+  reviewState,
+  selectedFindingId,
+  onSelect,
+}: UnanchoredFindingsProps) {
   if (findings.length === 0) return null
 
   return (
@@ -22,12 +30,13 @@ export function UnanchoredFindings({ findings, anchors, selectedFindingId, onSel
       <ul className="unanchored-items">
         {findings.map((finding) => {
           const isDocumentLevel = anchors.get(finding.id)?.status === 'document'
+          const status = getReview(reviewState, finding.id).status
           return (
             <li key={finding.id}>
               <button
                 type="button"
                 id={`document-finding-${finding.id}`}
-                className={`unanchored-item${finding.id === selectedFindingId ? ' is-active' : ''}`}
+                className={`unanchored-item is-${status}${finding.id === selectedFindingId ? ' is-active' : ''}`}
                 aria-pressed={finding.id === selectedFindingId}
                 onClick={() => onSelect(finding.id)}
               >

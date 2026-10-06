@@ -60,3 +60,15 @@ export interface FindingsReport {
   generatedAt: string
   findings: Finding[]
 }
+
+export type ReviewStatus = 'pending' | 'accepted' | 'dismissed'
+
+export const REVIEW_STATUSES: ReviewStatus[] = ['pending', 'accepted', 'dismissed']
+
+export interface FindingReview {
+  status: ReviewStatus
+  comment?: string
+}
+
+// Only findings the reviewer has touched get an entry; everything else is pending.
+export type ReviewState = Record<string, FindingReview>

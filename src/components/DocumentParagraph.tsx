@@ -1,5 +1,5 @@
 import { Fragment } from 'react'
-import type { Finding, Paragraph } from '../types/review'
+import type { Finding, Paragraph, ReviewState } from '../types/review'
 import { splitIntoSegments, type TextRange } from '../utils/annotations'
 import { Annotation } from './Annotation'
 
@@ -7,6 +7,7 @@ interface DocumentParagraphProps {
   paragraph: Paragraph
   ranges: TextRange[]
   findingsById: Map<string, Finding>
+  reviewState: ReviewState
   selectedFindingId: string | null
   onSelect: (findingId: string) => void
 }
@@ -15,6 +16,7 @@ export function DocumentParagraph({
   paragraph,
   ranges,
   findingsById,
+  reviewState,
   selectedFindingId,
   onSelect,
 }: DocumentParagraphProps) {
@@ -34,6 +36,7 @@ export function DocumentParagraph({
               key={segment.start}
               text={segment.text}
               findings={findings}
+              reviewState={reviewState}
               selectedFindingId={selectedFindingId}
               onSelect={onSelect}
             />

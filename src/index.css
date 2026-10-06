@@ -234,12 +234,45 @@ body {
   font-weight: 500;
 }
 
+.finding-meta-end {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-left: auto;
+}
+
 .finding-location {
   display: inline-flex;
   align-items: center;
   gap: var(--space-1);
-  margin-left: auto;
   font-family: var(--font-mono);
+}
+
+.status-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-weight: 500;
+}
+
+.status-tag.is-accepted {
+  color: var(--color-ink);
+}
+
+/* Reviewed cards step back so pending work stands out. */
+.finding-card.is-dismissed:not(.is-selected) .finding-title,
+.finding-card.is-accepted:not(.is-selected) .finding-title {
+  color: var(--color-body);
+  font-weight: 400;
+}
+
+.finding-card.is-dismissed:not(.is-selected) .severity-badge {
+  background: var(--color-surface-soft);
+  color: var(--color-body);
+}
+
+.finding-card.is-dismissed:not(.is-selected) .severity-dot {
+  background: var(--color-mute);
 }
 
 .finding-location.is-document,
@@ -411,6 +444,149 @@ body {
 
 .confidence-value {
   font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--color-body);
+}
+
+/* Buttons */
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 var(--space-3);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  cursor: pointer;
+  transition: background-color 120ms ease, border-color 120ms ease;
+}
+
+.button-primary {
+  background: var(--color-ink);
+  color: #fff;
+}
+
+.button-primary:hover {
+  background: #383838;
+}
+
+.button-ghost {
+  border-color: var(--color-hairline);
+  background: var(--color-surface);
+  color: var(--color-ink);
+}
+
+.button-ghost:hover {
+  border-color: #d4d4d4;
+  background: var(--color-canvas);
+}
+
+.button-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  align-self: flex-start;
+  padding: 2px 0;
+  border: 0;
+  background: none;
+  color: var(--color-body);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.button-link:hover {
+  color: var(--color-ink);
+}
+
+.button:focus-visible,
+.button-link:focus-visible,
+.comment-input:focus-visible {
+  outline: 2px solid var(--color-link);
+  outline-offset: 2px;
+}
+
+/* Review actions and notes */
+
+.review-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-hairline);
+}
+
+.review-actions .button-primary {
+  flex: 1;
+}
+
+.review-outcome {
+  display: inline-flex;
+  flex: 1;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+}
+
+.review-outcome.is-dismissed {
+  color: var(--color-body);
+}
+
+.comment {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.comment-text {
+  margin: 0;
+  padding: var(--space-2) var(--space-3);
+  border-left: 2px solid var(--color-ink);
+  border-radius: var(--radius-sm);
+  background: var(--color-canvas);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.comment-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.comment-input {
+  width: 100%;
+  min-height: 72px;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-ink);
+  font: inherit;
+  font-size: 14px;
+  line-height: 20px;
+  resize: vertical;
+}
+
+.comment-input:focus {
+  border-color: var(--color-ink);
+}
+
+.comment-form-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+.comment-hint {
+  flex: 1;
   font-size: 12px;
   color: var(--color-body);
 }
@@ -595,6 +771,13 @@ body {
   outline-offset: 1px;
 }
 
+.annotation.is-dismissed {
+  --wash: transparent;
+  --wash-strong: var(--color-surface-soft);
+
+  border-bottom: 1px dashed var(--color-mute);
+}
+
 /* While a finding is selected, the others fade to an underline so the selected text stands out. */
 .document.has-selection .annotation:not(.is-active):not(:hover) {
   background: transparent;
@@ -665,6 +848,11 @@ body {
   border-color: #d4d4d4;
 }
 
+.unanchored-item.is-dismissed .unanchored-title {
+  color: var(--color-body);
+  font-weight: 400;
+}
+
 .unanchored-item.is-active {
   border-color: var(--color-ink);
 }
@@ -733,7 +921,8 @@ body {
 
   .finding-card,
   .finding-chevron,
-  .annotation {
+  .annotation,
+  .button {
     transition: none;
   }
 }

@@ -1,10 +1,8 @@
-import { useEffect, useMemo, useState } from 'react'
-import { DocumentSkeleton, DocumentViewer } from './components/DocumentViewer'
-import { FindingList } from './components/FindingList'
+import { useEffect, useState } from 'react'
+import { DocumentSkeleton } from './components/DocumentViewer'
 import { Header } from './components/Header'
+import { ReviewWorkspace } from './components/ReviewWorkspace'
 import { loadReviewData, type ReviewData } from './data/loadReviewData'
-import { useFindingSelection } from './hooks/useFindingSelection'
-import { buildDocumentAnnotations } from './utils/annotations'
 
 type LoadState =
   | { status: 'loading' }
@@ -13,7 +11,6 @@ type LoadState =
 
 export function App() {
   const [loadState, setLoadState] = useState<LoadState>({ status: 'loading' })
-  const { selectedFindingId, selectFromList, selectFromDocument } = useFindingSelection()
 
   useEffect(() => {
     let cancelled = false
@@ -31,47 +28,29 @@ export function App() {
     }
   }, [])
 
-  const data = loadState.status === 'ready' ? loadState.data : undefined
-  const annotations = useMemo(
-    () => data && buildDocumentAnnotations(data.contract, data.report.findings),
-    [data],
-  )
-
   return (
     <div className="app">
-      <Header documentTitle={data?.contract.title} />
-      <div className="workspace">
-        <aside className="findings-panel" aria-label="Review findings">
-          {data && annotations ? (
-            <FindingList
-              findings={data.report.findings}
-              agent={data.report.agent}
-              paragraphs={annotations.paragraphs}
-              anchors={annotations.anchors}
-              selectedFindingId={selectedFindingId}
-              onSelect={selectFromList}
-            />
-          ) : (
-            loadState.status === 'loading' && <FindingListSkeleton />
-          )}
-        </aside>
-        <main className="document-pane">
-          {loadState.status === 'loading' && <DocumentSkeleton />}
-          {loadState.status === 'error' && (
-            <p className="pane-message" role="alert">
-              The document couldn’t be loaded. Please refresh to try again.
-            </p>
-          )}
-          {data && annotations && (
-            <DocumentViewer
-              contract={data.contract}
-              annotations={annotations}
-              selectedFindingId={selectedFindingId}
-              onSelect={selectFromDocument}
-            />
-          )}
-        </main>
-      </div>
+      {loadState.status === 'ready' ? (
+        <ReviewWorkspace data={loadState.data} />
+      ) : (
+        <>
+          <Header />
+          <div className="workspace">
+            <aside className="findings-panel" aria-label="Review findings">
+              {loadState.status === 'loading' && <FindingListSkeleton />}
+            </aside>
+            <main className="document-pane">
+              {loadState.status === 'loading' ? (
+                <DocumentSkeleton />
+              ) : (
+                <p className="pane-message" role="alert">
+                  The document couldn’t be loaded. Please refresh to try again.
+                </p>
+              )}
+            </main>
+          </div>
+        </>
+      )}
     </div>
   )
 }

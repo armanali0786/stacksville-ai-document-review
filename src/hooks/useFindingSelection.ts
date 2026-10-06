@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 
-type SelectionSource = 'list' | 'document'
+// 'advance' is a programmatic move to the next finding after a review action.
+type SelectionSource = 'list' | 'document' | 'advance'
 
 interface Selection {
   findingId: string
@@ -18,9 +19,14 @@ export function useFindingSelection() {
     if (!selection) return
     const behavior: ScrollBehavior = prefersReducedMotion() ? 'auto' : 'smooth'
 
-    document.getElementById(`finding-${selection.findingId}`)?.scrollIntoView({ block: 'nearest', behavior })
-    if (selection.source === 'list') {
+    const card = document.getElementById(`finding-${selection.findingId}`)
+    card?.scrollIntoView({ block: 'nearest', behavior })
+    if (selection.source !== 'document') {
       findDocumentTarget(selection.findingId)?.scrollIntoView({ block: 'center', behavior })
+    }
+    // The button that triggered an advance has just unmounted, so give keyboard users somewhere to land.
+    if (selection.source === 'advance') {
+      card?.querySelector<HTMLElement>('.finding-summary')?.focus({ preventScroll: true })
     }
   }, [selection])
 
@@ -32,10 +38,15 @@ export function useFindingSelection() {
     setSelection({ findingId, source: 'document' })
   }
 
+  function advanceTo(findingId: string | null) {
+    setSelection(findingId ? { findingId, source: 'advance' } : null)
+  }
+
   return {
     selectedFindingId: selection?.findingId ?? null,
     selectFromList,
     selectFromDocument,
+    advanceTo,
   }
 }
 

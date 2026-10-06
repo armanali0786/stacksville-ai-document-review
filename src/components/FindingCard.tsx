@@ -1,5 +1,5 @@
-import { ChevronDown, TriangleAlert } from 'lucide-react'
-import type { Finding } from '../types/review'
+import { Check, ChevronDown, MessageSquare, TriangleAlert, X } from 'lucide-react'
+import type { Finding, FindingReview, ReviewStatus } from '../types/review'
 import type { AnchorStatus } from '../utils/annotations'
 import { FindingDetails } from './FindingDetails'
 import { SeverityBadge } from './SeverityBadge'
@@ -8,17 +8,29 @@ interface FindingCardProps {
   finding: Finding
   anchorStatus: AnchorStatus
   locationLabel: string
+  review: FindingReview
   isSelected: boolean
   onSelect: (findingId: string) => void
+  onStatusChange: (findingId: string, status: ReviewStatus) => void
+  onCommentChange: (findingId: string, comment: string) => void
 }
 
-export function FindingCard({ finding, anchorStatus, locationLabel, isSelected, onSelect }: FindingCardProps) {
+export function FindingCard({
+  finding,
+  anchorStatus,
+  locationLabel,
+  review,
+  isSelected,
+  onSelect,
+  onStatusChange,
+  onCommentChange,
+}: FindingCardProps) {
   const detailsId = `finding-${finding.id}-details`
 
   return (
     <article
       id={`finding-${finding.id}`}
-      className={`finding-card${isSelected ? ' is-selected' : ''}`}
+      className={`finding-card is-${review.status}${isSelected ? ' is-selected' : ''}`}
       aria-label={finding.title}
     >
       <button
@@ -31,9 +43,13 @@ export function FindingCard({ finding, anchorStatus, locationLabel, isSelected, 
         <span className="finding-meta">
           <SeverityBadge severity={finding.severity} />
           <span className="finding-category">{finding.category}</span>
-          <span className={`finding-location is-${anchorStatus}`}>
-            {anchorStatus === 'unresolved' && <TriangleAlert size={12} aria-hidden="true" />}
-            {locationLabel}
+          <span className="finding-meta-end">
+            {review.comment && <MessageSquare size={14} aria-label="Has a note" />}
+            <StatusTag status={review.status} />
+            <span className={`finding-location is-${anchorStatus}`}>
+              {anchorStatus === 'unresolved' && <TriangleAlert size={12} aria-hidden="true" />}
+              {locationLabel}
+            </span>
           </span>
         </span>
         <span className="finding-title">{finding.title}</span>
@@ -42,9 +58,26 @@ export function FindingCard({ finding, anchorStatus, locationLabel, isSelected, 
 
       {isSelected && (
         <div id={detailsId}>
-          <FindingDetails finding={finding} anchorStatus={anchorStatus} />
+          <FindingDetails
+            finding={finding}
+            anchorStatus={anchorStatus}
+            review={review}
+            onStatusChange={(status) => onStatusChange(finding.id, status)}
+            onCommentChange={(comment) => onCommentChange(finding.id, comment)}
+          />
         </div>
       )}
     </article>
+  )
+}
+
+function StatusTag({ status }: { status: ReviewStatus }) {
+  if (status === 'pending') return null
+
+  return (
+    <span className={`status-tag is-${status}`}>
+      {status === 'accepted' ? <Check size={12} aria-hidden="true" /> : <X size={12} aria-hidden="true" />}
+      {status === 'accepted' ? 'Accepted' : 'Dismissed'}
+    </span>
   )
 }

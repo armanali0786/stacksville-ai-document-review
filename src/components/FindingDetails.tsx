@@ -1,10 +1,15 @@
+import { Check, RotateCcw, X } from 'lucide-react'
 import type { ReactNode } from 'react'
-import type { Finding } from '../types/review'
+import type { Finding, FindingReview, ReviewStatus } from '../types/review'
 import type { AnchorStatus } from '../utils/annotations'
+import { CommentBox } from './CommentBox'
 
 interface FindingDetailsProps {
   finding: Finding
   anchorStatus: AnchorStatus
+  review: FindingReview
+  onStatusChange: (status: ReviewStatus) => void
+  onCommentChange: (comment: string) => void
 }
 
 const ANCHOR_NOTES: Partial<Record<AnchorStatus, string>> = {
@@ -14,7 +19,13 @@ const ANCHOR_NOTES: Partial<Record<AnchorStatus, string>> = {
   unresolved: 'The quoted text couldn’t be found in the document, so it isn’t highlighted. Check the clause manually.',
 }
 
-export function FindingDetails({ finding, anchorStatus }: FindingDetailsProps) {
+export function FindingDetails({
+  finding,
+  anchorStatus,
+  review,
+  onStatusChange,
+  onCommentChange,
+}: FindingDetailsProps) {
   const anchorNote = ANCHOR_NOTES[anchorStatus]
 
   return (
@@ -36,6 +47,46 @@ export function FindingDetails({ finding, anchorStatus }: FindingDetailsProps) {
           <p className="finding-suggestion">{finding.suggestedEdit}</p>
         </DetailBlock>
       )}
+
+      <CommentBox findingId={finding.id} comment={review.comment} onSave={onCommentChange} />
+
+      <ReviewActions status={review.status} onStatusChange={onStatusChange} />
+    </div>
+  )
+}
+
+function ReviewActions({
+  status,
+  onStatusChange,
+}: {
+  status: ReviewStatus
+  onStatusChange: (status: ReviewStatus) => void
+}) {
+  if (status !== 'pending') {
+    return (
+      <div className="review-actions">
+        <span className={`review-outcome is-${status}`}>
+          {status === 'accepted' ? <Check size={14} aria-hidden="true" /> : <X size={14} aria-hidden="true" />}
+          {status === 'accepted' ? 'Accepted' : 'Dismissed'}
+        </span>
+        <button type="button" className="button button-ghost" onClick={() => onStatusChange('pending')}>
+          <RotateCcw size={14} aria-hidden="true" />
+          Undo
+        </button>
+      </div>
+    )
+  }
+
+  return (
+    <div className="review-actions">
+      <button type="button" className="button button-primary" onClick={() => onStatusChange('accepted')}>
+        <Check size={14} aria-hidden="true" />
+        Accept
+      </button>
+      <button type="button" className="button button-ghost" onClick={() => onStatusChange('dismissed')}>
+        <X size={14} aria-hidden="true" />
+        Dismiss
+      </button>
     </div>
   )
 }

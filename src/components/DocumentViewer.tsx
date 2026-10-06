@@ -1,4 +1,4 @@
-import type { Contract } from '../types/review'
+import type { Contract, ReviewState } from '../types/review'
 import type { DocumentAnnotations, TextRange } from '../utils/annotations'
 import { DocumentParagraph } from './DocumentParagraph'
 import { UnanchoredFindings } from './UnanchoredFindings'
@@ -6,13 +6,20 @@ import { UnanchoredFindings } from './UnanchoredFindings'
 interface DocumentViewerProps {
   contract: Contract
   annotations: DocumentAnnotations
+  reviewState: ReviewState
   selectedFindingId: string | null
   onSelect: (findingId: string) => void
 }
 
 const NO_RANGES: TextRange[] = []
 
-export function DocumentViewer({ contract, annotations, selectedFindingId, onSelect }: DocumentViewerProps) {
+export function DocumentViewer({
+  contract,
+  annotations,
+  reviewState,
+  selectedFindingId,
+  onSelect,
+}: DocumentViewerProps) {
   return (
     <article
       className={`document${selectedFindingId ? ' has-selection' : ''}`}
@@ -36,6 +43,7 @@ export function DocumentViewer({ contract, annotations, selectedFindingId, onSel
       <UnanchoredFindings
         findings={annotations.unanchoredFindings}
         anchors={annotations.anchors}
+        reviewState={reviewState}
         selectedFindingId={selectedFindingId}
         onSelect={onSelect}
       />
@@ -52,6 +60,7 @@ export function DocumentViewer({ contract, annotations, selectedFindingId, onSel
               paragraph={paragraph}
               ranges={annotations.rangesByParagraph.get(paragraph.id) ?? NO_RANGES}
               findingsById={annotations.findingsById}
+              reviewState={reviewState}
               selectedFindingId={selectedFindingId}
               onSelect={onSelect}
             />
