@@ -5,9 +5,12 @@ import { useReviewState } from '../hooks/useReviewState'
 import type { ReviewStatus } from '../types/review'
 import { buildDocumentAnnotations } from '../utils/annotations'
 import { getNextPendingId } from '../utils/filters'
+import { summarizeReview, summarizeSections } from '../utils/summary'
 import { DocumentViewer } from './DocumentViewer'
 import { FindingList } from './FindingList'
 import { Header } from './Header'
+import { ReviewProgress } from './ReviewProgress'
+import { RiskSummary } from './RiskSummary'
 
 interface ReviewWorkspaceProps {
   data: ReviewData
@@ -16,21 +19,41 @@ interface ReviewWorkspaceProps {
 export function ReviewWorkspace({ data }: ReviewWorkspaceProps) {
   const { contract, report } = data
   const annotations = useMemo(() => buildDocumentAnnotations(contract, report.findings), [contract, report])
-  const { reviewState, setStatus, setComment } = useReviewState(contract.id)
-  const { selectedFindingId, selectFromList, selectFromDocument, advanceTo } = useFindingSelection()
+  const { reviewState, setStatus, setComment, resetReview } = useReviewState(contract.id)
+  const { selectedFindingId, selectFromList, selectFromDocument, goToFinding } = useFindingSelection()
+
+  const summary = useMemo(() => summarizeReview(report.findings, reviewState), [report, reviewState])
+  const sections = useMemo(
+    () => summarizeSections(contract, report.findings, annotations, reviewState),
+    [contract, report, annotations, reviewState],
+  )
 
   function handleStatusChange(findingId: string, status: ReviewStatus) {
     setStatus(findingId, status)
     if (status !== 'pending') {
-      advanceTo(getNextPendingId(report.findings, reviewState, findingId))
+      goToFinding(getNextPendingId(report.findings, reviewState, findingId))
     }
+  }
+
+  function handleReset() {
+    if (!window.confirm('Clear every decision and note for this document?')) return
+    resetReview()
+    goToFinding(null)
   }
 
   return (
     <>
-      <Header documentTitle={contract.title} />
+      <Header documentTitle={contract.title}>
+        <ReviewProgress summary={summary} />
+      </Header>
       <div className="workspace">
         <aside className="findings-panel" aria-label="Review findings">
+          <RiskSummary
+            summary={summary}
+            sections={sections}
+            onFindingSelect={goToFinding}
+            onReset={handleReset}
+          />
           <FindingList
             findings={report.findings}
             agent={report.agent}

@@ -16,7 +16,8 @@
   --severity-high: #ee0000;
   --severity-high-soft: #ffeded;
   --severity-high-text: #b80000;
-  --severity-medium: #f5a623;
+  /* Deepened from #f5a623, which is under 2:1 on white; this keeps red/amber apart for deuteranopes. */
+  --severity-medium: #d98200;
   --severity-medium-soft: #fff4e0;
   --severity-medium-text: #8a5300;
   --severity-low: #0070f3;
@@ -105,6 +106,61 @@ body {
   color: var(--color-body);
 }
 
+.header-end {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+}
+
+/* Review progress (header) */
+
+.review-progress {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--color-body);
+}
+
+.progress-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.progress-label strong {
+  color: var(--color-ink);
+  font-weight: 600;
+}
+
+.review-progress.is-complete .progress-label {
+  color: var(--color-ink);
+  font-weight: 500;
+}
+
+.progress-track {
+  width: 160px;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--color-surface-soft);
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: var(--color-ink);
+  transition: width 240ms ease;
+}
+
+.progress-breakdown {
+  font-size: 12px;
+  white-space: nowrap;
+}
+
 .document-pane {
   flex: 1;
   overflow-y: auto;
@@ -132,6 +188,203 @@ body {
   overflow-y: auto;
   background: var(--color-canvas);
   border-right: 1px solid var(--color-hairline);
+}
+
+/* Risk summary (top of the findings panel) */
+
+.eyebrow {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 16px;
+  text-transform: uppercase;
+  color: var(--color-body);
+}
+
+.risk-summary {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin: var(--space-6) var(--space-4) 0;
+  padding: var(--space-4);
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-whisper);
+}
+
+.risk-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.risk-level {
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+  background: var(--color-surface-soft);
+  color: var(--color-ink);
+}
+
+.risk-level.is-high {
+  background: var(--severity-high-soft);
+  color: var(--severity-high-text);
+}
+
+.risk-level.is-medium {
+  background: var(--severity-medium-soft);
+  color: var(--severity-medium-text);
+}
+
+.risk-level.is-low {
+  background: var(--severity-low-soft);
+  color: var(--severity-low-text);
+}
+
+.severity-tiles {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-2);
+  margin: 0;
+}
+
+.severity-tile {
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-sm);
+}
+
+.severity-tile dt {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--color-body);
+}
+
+.severity-tile dd {
+  margin: 2px 0 0;
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 32px;
+  letter-spacing: -0.5px;
+  font-variant-numeric: tabular-nums;
+}
+
+.tile-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.tile-dot.is-high {
+  background: var(--severity-high);
+}
+
+.tile-dot.is-medium {
+  background: var(--severity-medium);
+}
+
+.tile-dot.is-low {
+  background: var(--severity-low);
+}
+
+.risk-caption {
+  margin: calc(var(--space-1) * -1) 0 0;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--color-body);
+}
+
+.section-map {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-hairline);
+}
+
+.section-cells {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(22px, 1fr));
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.section-cell > * {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 28px;
+  border: 1px solid var(--color-hairline);
+  border-radius: 4px;
+  background: var(--color-surface);
+  color: var(--color-body);
+  font: inherit;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.section-cell button {
+  cursor: pointer;
+}
+
+.section-cell button:hover {
+  box-shadow: inset 0 0 0 1px currentColor;
+}
+
+.section-cell button:focus-visible {
+  outline: 2px solid var(--color-link);
+  outline-offset: 1px;
+}
+
+.section-cell.is-high > * {
+  border-color: var(--severity-high);
+  background: var(--severity-high-soft);
+  color: var(--severity-high-text);
+}
+
+.section-cell.is-medium > * {
+  border-color: var(--severity-medium);
+  background: var(--severity-medium-soft);
+  color: var(--severity-medium-text);
+}
+
+.section-cell.is-low > * {
+  border-color: var(--severity-low);
+  background: var(--severity-low-soft);
+  color: var(--severity-low-text);
+}
+
+.review-complete {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border-radius: var(--radius-sm);
+  background: var(--color-ink);
+  color: #fff;
+}
+
+.review-complete-text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.review-complete-text span {
+  font-size: 12px;
+  color: #d4d4d4;
 }
 
 /* Findings panel */
@@ -922,7 +1175,8 @@ body {
   .finding-card,
   .finding-chevron,
   .annotation,
-  .button {
+  .button,
+  .progress-fill {
     transition: none;
   }
 }
@@ -958,7 +1212,9 @@ body {
     grid-template-columns: 36px 1fr;
   }
 
-  .header-document {
+  .header-document,
+  .progress-breakdown,
+  .progress-track {
     display: none;
   }
 }

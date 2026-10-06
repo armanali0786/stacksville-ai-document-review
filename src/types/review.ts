@@ -29,6 +29,8 @@ export type Severity = 'high' | 'medium' | 'low'
 // Ordered most to least severe, so the index doubles as a sort rank.
 export const SEVERITIES: Severity[] = ['high', 'medium', 'low']
 
+export const SEVERITY_LABELS: Record<Severity, string> = { high: 'High', medium: 'Medium', low: 'Low' }
+
 export interface FindingAnchor {
   paragraphId: string
   start: number

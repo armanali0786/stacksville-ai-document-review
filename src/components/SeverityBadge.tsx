@@ -1,10 +1,4 @@
-import type { Severity } from '../types/review'
-
-const SEVERITY_LABELS: Record<Severity, string> = {
-  high: 'High',
-  medium: 'Medium',
-  low: 'Low',
-}
+import { SEVERITY_LABELS, type Severity } from '../types/review'
 
 export function SeverityBadge({ severity }: { severity: Severity }) {
   return (

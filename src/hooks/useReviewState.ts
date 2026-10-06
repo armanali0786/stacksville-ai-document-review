@@ -33,7 +33,11 @@ export function useReviewState(documentId: string) {
     }))
   }
 
-  return { reviewState, setStatus, setComment }
+  function resetReview() {
+    setReviewState({})
+  }
+
+  return { reviewState, setStatus, setComment, resetReview }
 }
 
 // Stored data may be from an older version or edited by hand, so keep only entries that look right.

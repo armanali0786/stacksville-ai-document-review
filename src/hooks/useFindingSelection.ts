@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 
-// 'advance' is a programmatic move to the next finding after a review action.
-type SelectionSource = 'list' | 'document' | 'advance'
+// 'jump' is a programmatic move: auto-advance after an action, or a click in the risk summary.
+type SelectionSource = 'list' | 'document' | 'jump'
 
 interface Selection {
   findingId: string
@@ -24,8 +24,8 @@ export function useFindingSelection() {
     if (selection.source !== 'document') {
       findDocumentTarget(selection.findingId)?.scrollIntoView({ block: 'center', behavior })
     }
-    // The button that triggered an advance has just unmounted, so give keyboard users somewhere to land.
-    if (selection.source === 'advance') {
+    // After a jump the triggering button may have unmounted, so give keyboard users somewhere to land.
+    if (selection.source === 'jump') {
       card?.querySelector<HTMLElement>('.finding-summary')?.focus({ preventScroll: true })
     }
   }, [selection])
@@ -38,15 +38,15 @@ export function useFindingSelection() {
     setSelection({ findingId, source: 'document' })
   }
 
-  function advanceTo(findingId: string | null) {
-    setSelection(findingId ? { findingId, source: 'advance' } : null)
+  function goToFinding(findingId: string | null) {
+    setSelection(findingId ? { findingId, source: 'jump' } : null)
   }
 
   return {
     selectedFindingId: selection?.findingId ?? null,
     selectFromList,
     selectFromDocument,
-    advanceTo,
+    goToFinding,
   }
 }
 
