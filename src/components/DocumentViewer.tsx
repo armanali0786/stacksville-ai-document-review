@@ -1,11 +1,16 @@
-import type { Contract, Section } from '../types/review'
+import type { Contract, Finding, Section } from '../types/review'
+import type { TextRange } from '../utils/annotations'
 import { DocumentParagraph } from './DocumentParagraph'
 
 interface DocumentViewerProps {
   contract: Contract
+  rangesByParagraph: Map<string, TextRange[]>
+  findingsById: Map<string, Finding>
 }
 
-export function DocumentViewer({ contract }: DocumentViewerProps) {
+const NO_RANGES: TextRange[] = []
+
+export function DocumentViewer({ contract, rangesByParagraph, findingsById }: DocumentViewerProps) {
   return (
     <article className="document" aria-labelledby="document-title">
       <header className="document-header">
@@ -24,13 +29,24 @@ export function DocumentViewer({ contract }: DocumentViewerProps) {
       </header>
 
       {contract.sections.map((section) => (
-        <DocumentSection key={section.id} section={section} />
+        <DocumentSection
+          key={section.id}
+          section={section}
+          rangesByParagraph={rangesByParagraph}
+          findingsById={findingsById}
+        />
       ))}
     </article>
   )
 }
 
-function DocumentSection({ section }: { section: Section }) {
+interface DocumentSectionProps {
+  section: Section
+  rangesByParagraph: Map<string, TextRange[]>
+  findingsById: Map<string, Finding>
+}
+
+function DocumentSection({ section, rangesByParagraph, findingsById }: DocumentSectionProps) {
   const headingId = `${section.id}-heading`
 
   return (
@@ -40,7 +56,12 @@ function DocumentSection({ section }: { section: Section }) {
         {section.heading}
       </h2>
       {section.paragraphs.map((paragraph) => (
-        <DocumentParagraph key={paragraph.id} paragraph={paragraph} />
+        <DocumentParagraph
+          key={paragraph.id}
+          paragraph={paragraph}
+          ranges={rangesByParagraph.get(paragraph.id) ?? NO_RANGES}
+          findingsById={findingsById}
+        />
       ))}
     </section>
   )

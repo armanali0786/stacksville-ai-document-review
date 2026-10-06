@@ -3,7 +3,7 @@ import { DocumentSkeleton, DocumentViewer } from './components/DocumentViewer'
 import { FindingList } from './components/FindingList'
 import { Header } from './components/Header'
 import { loadReviewData, type ReviewData } from './data/loadReviewData'
-import { buildParagraphIndex, type ParagraphIndex } from './utils/annotations'
+import { buildDocumentAnnotations } from './utils/annotations'
 
 type LoadState =
   | { status: 'loading' }
@@ -31,8 +31,8 @@ export function App() {
   }, [])
 
   const data = loadState.status === 'ready' ? loadState.data : undefined
-  const paragraphs = useMemo<ParagraphIndex>(
-    () => (data ? buildParagraphIndex(data.contract) : new Map()),
+  const annotations = useMemo(
+    () => data && buildDocumentAnnotations(data.contract, data.report.findings),
     [data],
   )
 
@@ -45,11 +45,12 @@ export function App() {
       <Header documentTitle={data?.contract.title} />
       <div className="workspace">
         <aside className="findings-panel" aria-label="Review findings">
-          {data ? (
+          {data && annotations ? (
             <FindingList
               findings={data.report.findings}
               agent={data.report.agent}
-              paragraphs={paragraphs}
+              paragraphs={annotations.paragraphs}
+              anchors={annotations.anchors}
               selectedFindingId={selectedFindingId}
               onSelect={handleFindingSelect}
             />
@@ -64,7 +65,13 @@ export function App() {
               The document couldn’t be loaded. Please refresh to try again.
             </p>
           )}
-          {data && <DocumentViewer contract={data.contract} />}
+          {data && annotations && (
+            <DocumentViewer
+              contract={data.contract}
+              rangesByParagraph={annotations.rangesByParagraph}
+              findingsById={annotations.findingsById}
+            />
+          )}
         </main>
       </div>
     </div>

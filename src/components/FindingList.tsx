@@ -1,17 +1,27 @@
 import { SearchCheck } from 'lucide-react'
 import type { Finding, ReviewAgent } from '../types/review'
-import { getLocationLabel, type ParagraphIndex } from '../utils/annotations'
+import { getLocationLabel, type ParagraphIndex, type ResolvedAnchor } from '../utils/annotations'
 import { FindingCard } from './FindingCard'
+
+const UNRESOLVED: ResolvedAnchor = { status: 'unresolved', ranges: [] }
 
 interface FindingListProps {
   findings: Finding[]
   agent: ReviewAgent
   paragraphs: ParagraphIndex
+  anchors: Map<string, ResolvedAnchor>
   selectedFindingId: string | null
   onSelect: (findingId: string) => void
 }
 
-export function FindingList({ findings, agent, paragraphs, selectedFindingId, onSelect }: FindingListProps) {
+export function FindingList({
+  findings,
+  agent,
+  paragraphs,
+  anchors,
+  selectedFindingId,
+  onSelect,
+}: FindingListProps) {
   return (
     <section className="finding-list" aria-labelledby="findings-heading">
       <header className="panel-header">
@@ -31,16 +41,20 @@ export function FindingList({ findings, agent, paragraphs, selectedFindingId, on
         </div>
       ) : (
         <ul className="finding-items">
-          {findings.map((finding) => (
-            <li key={finding.id}>
-              <FindingCard
-                finding={finding}
-                locationLabel={getLocationLabel(finding.anchor, paragraphs)}
-                isSelected={finding.id === selectedFindingId}
-                onSelect={onSelect}
-              />
-            </li>
-          ))}
+          {findings.map((finding) => {
+            const anchor = anchors.get(finding.id) ?? UNRESOLVED
+            return (
+              <li key={finding.id}>
+                <FindingCard
+                  finding={finding}
+                  anchorStatus={anchor.status}
+                  locationLabel={getLocationLabel(anchor, paragraphs)}
+                  isSelected={finding.id === selectedFindingId}
+                  onSelect={onSelect}
+                />
+              </li>
+            )
+          })}
         </ul>
       )}
     </section>

@@ -1,16 +1,18 @@
-import { ChevronDown } from 'lucide-react'
+import { ChevronDown, TriangleAlert } from 'lucide-react'
 import type { Finding } from '../types/review'
+import type { AnchorStatus } from '../utils/annotations'
 import { FindingDetails } from './FindingDetails'
 import { SeverityBadge } from './SeverityBadge'
 
 interface FindingCardProps {
   finding: Finding
+  anchorStatus: AnchorStatus
   locationLabel: string
   isSelected: boolean
   onSelect: (findingId: string) => void
 }
 
-export function FindingCard({ finding, locationLabel, isSelected, onSelect }: FindingCardProps) {
+export function FindingCard({ finding, anchorStatus, locationLabel, isSelected, onSelect }: FindingCardProps) {
   const detailsId = `finding-${finding.id}-details`
 
   return (
@@ -29,7 +31,8 @@ export function FindingCard({ finding, locationLabel, isSelected, onSelect }: Fi
         <span className="finding-meta">
           <SeverityBadge severity={finding.severity} />
           <span className="finding-category">{finding.category}</span>
-          <span className={`finding-location${finding.anchor ? '' : ' is-document-level'}`}>
+          <span className={`finding-location is-${anchorStatus}`}>
+            {anchorStatus === 'unresolved' && <TriangleAlert size={12} aria-hidden="true" />}
             {locationLabel}
           </span>
         </span>
@@ -39,7 +42,7 @@ export function FindingCard({ finding, locationLabel, isSelected, onSelect }: Fi
 
       {isSelected && (
         <div id={detailsId}>
-          <FindingDetails finding={finding} />
+          <FindingDetails finding={finding} anchorStatus={anchorStatus} />
         </div>
       )}
     </article>

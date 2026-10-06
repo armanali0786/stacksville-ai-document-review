@@ -26,6 +26,9 @@ export interface Contract {
 
 export type Severity = 'high' | 'medium' | 'low'
 
+// Ordered most to least severe, so the index doubles as a sort rank.
+export const SEVERITIES: Severity[] = ['high', 'medium', 'low']
+
 export interface FindingAnchor {
   paragraphId: string
   start: number

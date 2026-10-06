@@ -235,14 +235,23 @@ body {
 }
 
 .finding-location {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
   margin-left: auto;
   font-family: var(--font-mono);
 }
 
-.finding-location.is-document-level {
+.finding-location.is-document,
+.finding-location.is-unresolved {
   padding: 0 var(--space-1);
   border-radius: 4px;
   background: var(--color-surface-soft);
+}
+
+.finding-location.is-unresolved {
+  color: var(--severity-medium-text);
+  background: var(--severity-medium-soft);
 }
 
 .finding-title {
@@ -361,6 +370,11 @@ body {
   border-radius: var(--radius-sm);
   background: var(--color-surface-soft);
   color: var(--color-body);
+}
+
+.finding-note.is-unresolved {
+  background: var(--severity-medium-soft);
+  color: var(--severity-medium-text);
 }
 
 .confidence {
@@ -532,6 +546,49 @@ body {
 .paragraph-text {
   margin: 0;
   overflow-wrap: anywhere;
+}
+
+/* Annotations: a soft wash plus an underline in the severity color.
+   Overlapping segments get a stronger wash and a double underline so they stand out. */
+
+.annotation {
+  padding: 1px 0;
+  border-bottom: 2px solid;
+  color: inherit;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+.annotation-high {
+  background: var(--severity-high-soft);
+  border-bottom-color: var(--severity-high);
+}
+
+.annotation-medium {
+  background: var(--severity-medium-soft);
+  border-bottom-color: var(--severity-medium);
+}
+
+.annotation-low {
+  background: var(--severity-low-soft);
+  border-bottom-color: var(--severity-low);
+}
+
+.annotation.is-overlap {
+  border-bottom-style: double;
+  border-bottom-width: 4px;
+}
+
+.annotation-high.is-overlap {
+  background: #ffd9d9;
+}
+
+.annotation-medium.is-overlap {
+  background: #ffe8bf;
+}
+
+.annotation-low.is-overlap {
+  background: #d6e7ff;
 }
 
 /* Loading skeleton */

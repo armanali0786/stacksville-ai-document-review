@@ -1,26 +1,35 @@
 import type { ReactNode } from 'react'
 import type { Finding } from '../types/review'
+import type { AnchorStatus } from '../utils/annotations'
 
 interface FindingDetailsProps {
   finding: Finding
+  anchorStatus: AnchorStatus
 }
 
-export function FindingDetails({ finding }: FindingDetailsProps) {
+const ANCHOR_NOTES: Partial<Record<AnchorStatus, string>> = {
+  document: 'This finding is about the document as a whole, so there is no specific clause to highlight.',
+  relocated:
+    'The agent’s position for this text was slightly off, so the highlight was placed where the quoted text actually appears.',
+  unresolved: 'The quoted text couldn’t be found in the document, so it isn’t highlighted. Check the clause manually.',
+}
+
+export function FindingDetails({ finding, anchorStatus }: FindingDetailsProps) {
+  const anchorNote = ANCHOR_NOTES[anchorStatus]
+
   return (
     <div className="finding-details">
       <p className="finding-explanation">{finding.explanation}</p>
 
       <ConfidenceMeter confidence={finding.confidence} />
 
-      {finding.anchor ? (
+      {finding.anchor?.quote && (
         <DetailBlock label="Flagged text">
           <blockquote className="finding-quote">{finding.anchor.quote}</blockquote>
         </DetailBlock>
-      ) : (
-        <p className="finding-note">
-          This finding is about the document as a whole, so there is no specific clause to highlight.
-        </p>
       )}
+
+      {anchorNote && <p className={`finding-note is-${anchorStatus}`}>{anchorNote}</p>}
 
       {finding.suggestedEdit && (
         <DetailBlock label="Suggested edit">
