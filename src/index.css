@@ -529,6 +529,7 @@ body {
 }
 
 .paragraph {
+  position: relative;
   display: grid;
   grid-template-columns: 44px 1fr;
   scroll-margin-top: var(--space-8);
@@ -552,26 +553,31 @@ body {
    Overlapping segments get a stronger wash and a double underline so they stand out. */
 
 .annotation {
+  --wash: var(--severity-low-soft);
+  --wash-strong: #cfe3ff;
+  --line: var(--severity-low);
+
   padding: 1px 0;
-  border-bottom: 2px solid;
+  border-bottom: 2px solid var(--line);
+  border-radius: 2px;
+  background: var(--wash);
   color: inherit;
+  cursor: pointer;
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;
+  transition: background-color 120ms ease;
 }
 
 .annotation-high {
-  background: var(--severity-high-soft);
-  border-bottom-color: var(--severity-high);
+  --wash: var(--severity-high-soft);
+  --wash-strong: #ffd0d0;
+  --line: var(--severity-high);
 }
 
 .annotation-medium {
-  background: var(--severity-medium-soft);
-  border-bottom-color: var(--severity-medium);
-}
-
-.annotation-low {
-  background: var(--severity-low-soft);
-  border-bottom-color: var(--severity-low);
+  --wash: var(--severity-medium-soft);
+  --wash-strong: #ffe2ad;
+  --line: var(--severity-medium);
 }
 
 .annotation.is-overlap {
@@ -579,16 +585,104 @@ body {
   border-bottom-width: 4px;
 }
 
-.annotation-high.is-overlap {
-  background: #ffd9d9;
+.annotation:hover,
+.annotation.is-active {
+  background: var(--wash-strong);
 }
 
-.annotation-medium.is-overlap {
-  background: #ffe8bf;
+.annotation:focus-visible {
+  outline: 2px solid var(--color-link);
+  outline-offset: 1px;
 }
 
-.annotation-low.is-overlap {
-  background: #d6e7ff;
+/* While a finding is selected, the others fade to an underline so the selected text stands out. */
+.document.has-selection .annotation:not(.is-active):not(:hover) {
+  background: transparent;
+}
+
+.paragraph.is-active::before {
+  content: '';
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  left: -20px;
+  width: 3px;
+  border-radius: 2px;
+  background: var(--color-ink);
+}
+
+.paragraph.is-active .paragraph-number {
+  color: var(--color-ink);
+}
+
+/* Findings that have nothing to highlight */
+
+.unanchored {
+  margin-bottom: var(--space-10);
+  padding: var(--space-4);
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-md);
+  background: var(--color-canvas);
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.unanchored-heading {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-3);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.unanchored-items {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.unanchored-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  scroll-margin: var(--space-8);
+}
+
+.unanchored-item:hover {
+  border-color: #d4d4d4;
+}
+
+.unanchored-item.is-active {
+  border-color: var(--color-ink);
+}
+
+.unanchored-item:focus-visible {
+  outline: 2px solid var(--color-link);
+  outline-offset: 2px;
+}
+
+.unanchored-title {
+  flex: 1;
+  font-weight: 500;
+}
+
+.unanchored-reason {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--color-body);
 }
 
 /* Loading skeleton */
@@ -638,7 +732,8 @@ body {
   }
 
   .finding-card,
-  .finding-chevron {
+  .finding-chevron,
+  .annotation {
     transition: none;
   }
 }

@@ -126,6 +126,8 @@ export interface DocumentAnnotations {
   anchors: Map<string, ResolvedAnchor>
   rangesByParagraph: Map<string, TextRange[]>
   findingsById: Map<string, Finding>
+  // Findings with nothing to highlight: document-level ones and anchors we couldn't place.
+  unanchoredFindings: Finding[]
 }
 
 // Everything the UI needs to connect findings and text, derived once when data loads.
@@ -138,6 +140,7 @@ export function buildDocumentAnnotations(contract: Contract, findings: Finding[]
     anchors,
     rangesByParagraph: groupRangesByParagraph(anchors.values()),
     findingsById: new Map(findings.map((finding) => [finding.id, finding])),
+    unanchoredFindings: findings.filter((finding) => anchors.get(finding.id)?.ranges.length === 0),
   }
 }
 

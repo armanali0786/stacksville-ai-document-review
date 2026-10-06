@@ -7,13 +7,22 @@ interface DocumentParagraphProps {
   paragraph: Paragraph
   ranges: TextRange[]
   findingsById: Map<string, Finding>
+  selectedFindingId: string | null
+  onSelect: (findingId: string) => void
 }
 
-export function DocumentParagraph({ paragraph, ranges, findingsById }: DocumentParagraphProps) {
+export function DocumentParagraph({
+  paragraph,
+  ranges,
+  findingsById,
+  selectedFindingId,
+  onSelect,
+}: DocumentParagraphProps) {
   const segments = splitIntoSegments(paragraph.text, ranges)
+  const isActive = ranges.some((range) => range.findingId === selectedFindingId)
 
   return (
-    <div className="paragraph" id={paragraph.id}>
+    <div className={`paragraph${isActive ? ' is-active' : ''}`} id={paragraph.id}>
       <span className="paragraph-number" aria-hidden={paragraph.number ? undefined : true}>
         {paragraph.number}
       </span>
@@ -21,7 +30,13 @@ export function DocumentParagraph({ paragraph, ranges, findingsById }: DocumentP
         {segments.map((segment) => {
           const findings = segment.findingIds.flatMap((id) => findingsById.get(id) ?? [])
           return findings.length > 0 ? (
-            <Annotation key={segment.start} text={segment.text} findings={findings} />
+            <Annotation
+              key={segment.start}
+              text={segment.text}
+              findings={findings}
+              selectedFindingId={selectedFindingId}
+              onSelect={onSelect}
+            />
           ) : (
             <Fragment key={segment.start}>{segment.text}</Fragment>
           )

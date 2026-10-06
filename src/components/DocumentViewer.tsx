@@ -1,18 +1,23 @@
-import type { Contract, Finding, Section } from '../types/review'
-import type { TextRange } from '../utils/annotations'
+import type { Contract } from '../types/review'
+import type { DocumentAnnotations, TextRange } from '../utils/annotations'
 import { DocumentParagraph } from './DocumentParagraph'
+import { UnanchoredFindings } from './UnanchoredFindings'
 
 interface DocumentViewerProps {
   contract: Contract
-  rangesByParagraph: Map<string, TextRange[]>
-  findingsById: Map<string, Finding>
+  annotations: DocumentAnnotations
+  selectedFindingId: string | null
+  onSelect: (findingId: string) => void
 }
 
 const NO_RANGES: TextRange[] = []
 
-export function DocumentViewer({ contract, rangesByParagraph, findingsById }: DocumentViewerProps) {
+export function DocumentViewer({ contract, annotations, selectedFindingId, onSelect }: DocumentViewerProps) {
   return (
-    <article className="document" aria-labelledby="document-title">
+    <article
+      className={`document${selectedFindingId ? ' has-selection' : ''}`}
+      aria-labelledby="document-title"
+    >
       <header className="document-header">
         <p className="document-eyebrow">Effective {formatDate(contract.effectiveDate)}</p>
         <h1 id="document-title" className="document-title">
@@ -28,42 +33,32 @@ export function DocumentViewer({ contract, rangesByParagraph, findingsById }: Do
         </ul>
       </header>
 
+      <UnanchoredFindings
+        findings={annotations.unanchoredFindings}
+        anchors={annotations.anchors}
+        selectedFindingId={selectedFindingId}
+        onSelect={onSelect}
+      />
+
       {contract.sections.map((section) => (
-        <DocumentSection
-          key={section.id}
-          section={section}
-          rangesByParagraph={rangesByParagraph}
-          findingsById={findingsById}
-        />
+        <section key={section.id} className="document-section" aria-labelledby={`${section.id}-heading`}>
+          <h2 id={`${section.id}-heading`} className="section-heading">
+            {section.number && <span className="section-number">{section.number}.</span>}
+            {section.heading}
+          </h2>
+          {section.paragraphs.map((paragraph) => (
+            <DocumentParagraph
+              key={paragraph.id}
+              paragraph={paragraph}
+              ranges={annotations.rangesByParagraph.get(paragraph.id) ?? NO_RANGES}
+              findingsById={annotations.findingsById}
+              selectedFindingId={selectedFindingId}
+              onSelect={onSelect}
+            />
+          ))}
+        </section>
       ))}
     </article>
-  )
-}
-
-interface DocumentSectionProps {
-  section: Section
-  rangesByParagraph: Map<string, TextRange[]>
-  findingsById: Map<string, Finding>
-}
-
-function DocumentSection({ section, rangesByParagraph, findingsById }: DocumentSectionProps) {
-  const headingId = `${section.id}-heading`
-
-  return (
-    <section className="document-section" aria-labelledby={headingId}>
-      <h2 id={headingId} className="section-heading">
-        {section.number && <span className="section-number">{section.number}.</span>}
-        {section.heading}
-      </h2>
-      {section.paragraphs.map((paragraph) => (
-        <DocumentParagraph
-          key={paragraph.id}
-          paragraph={paragraph}
-          ranges={rangesByParagraph.get(paragraph.id) ?? NO_RANGES}
-          findingsById={findingsById}
-        />
-      ))}
-    </section>
   )
 }
 

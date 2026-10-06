@@ -3,6 +3,7 @@ import { DocumentSkeleton, DocumentViewer } from './components/DocumentViewer'
 import { FindingList } from './components/FindingList'
 import { Header } from './components/Header'
 import { loadReviewData, type ReviewData } from './data/loadReviewData'
+import { useFindingSelection } from './hooks/useFindingSelection'
 import { buildDocumentAnnotations } from './utils/annotations'
 
 type LoadState =
@@ -12,7 +13,7 @@ type LoadState =
 
 export function App() {
   const [loadState, setLoadState] = useState<LoadState>({ status: 'loading' })
-  const [selectedFindingId, setSelectedFindingId] = useState<string | null>(null)
+  const { selectedFindingId, selectFromList, selectFromDocument } = useFindingSelection()
 
   useEffect(() => {
     let cancelled = false
@@ -36,10 +37,6 @@ export function App() {
     [data],
   )
 
-  function handleFindingSelect(findingId: string) {
-    setSelectedFindingId((current) => (current === findingId ? null : findingId))
-  }
-
   return (
     <div className="app">
       <Header documentTitle={data?.contract.title} />
@@ -52,7 +49,7 @@ export function App() {
               paragraphs={annotations.paragraphs}
               anchors={annotations.anchors}
               selectedFindingId={selectedFindingId}
-              onSelect={handleFindingSelect}
+              onSelect={selectFromList}
             />
           ) : (
             loadState.status === 'loading' && <FindingListSkeleton />
@@ -68,8 +65,9 @@ export function App() {
           {data && annotations && (
             <DocumentViewer
               contract={data.contract}
-              rangesByParagraph={annotations.rangesByParagraph}
-              findingsById={annotations.findingsById}
+              annotations={annotations}
+              selectedFindingId={selectedFindingId}
+              onSelect={selectFromDocument}
             />
           )}
         </main>
