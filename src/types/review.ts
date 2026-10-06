@@ -23,3 +23,37 @@ export interface Contract {
   parties: Party[]
   sections: Section[]
 }
+
+export type Severity = 'high' | 'medium' | 'low'
+
+export interface FindingAnchor {
+  paragraphId: string
+  start: number
+  end: number
+  quote: string
+  // Present when the span runs into a later paragraph; `end` is then an offset into that paragraph.
+  endParagraphId?: string
+}
+
+export interface Finding {
+  id: string
+  severity: Severity
+  category: string
+  title: string
+  explanation: string
+  anchor: FindingAnchor | null
+  suggestedEdit: string | null
+  confidence: number
+}
+
+export interface ReviewAgent {
+  name: string
+  version: string
+}
+
+export interface FindingsReport {
+  documentId: string
+  agent: ReviewAgent
+  generatedAt: string
+  findings: Finding[]
+}
