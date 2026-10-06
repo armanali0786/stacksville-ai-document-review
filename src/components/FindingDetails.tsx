@@ -100,7 +100,16 @@ function DetailBlock({ label, children }: { label: string; children: ReactNode }
   )
 }
 
-function ConfidenceMeter({ confidence }: { confidence: number }) {
+function ConfidenceMeter({ confidence }: { confidence: number | null }) {
+  if (confidence === null) {
+    return (
+      <div className="confidence">
+        <span className="detail-label">Confidence</span>
+        <span className="confidence-value">Not provided by the agent</span>
+      </div>
+    )
+  }
+
   const percent = Math.round(Math.min(Math.max(confidence, 0), 1) * 100)
   const level = percent >= 80 ? 'High' : percent >= 60 ? 'Moderate' : 'Low'
 

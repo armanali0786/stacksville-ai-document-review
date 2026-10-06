@@ -188,7 +188,7 @@ export function getLocationLabel(resolved: ResolvedAnchor, paragraphs: Paragraph
   if (resolved.status === 'document') return 'Whole document'
 
   const first = resolved.ranges[0] && paragraphs.get(resolved.ranges[0].paragraphId)
-  if (!first) return 'Location not found'
+  if (!first) return 'Text not found'
 
   const last = paragraphs.get(resolved.ranges[resolved.ranges.length - 1].paragraphId)
   if (!last || last === first) return formatParagraphRef(first)

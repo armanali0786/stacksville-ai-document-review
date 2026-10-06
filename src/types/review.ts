@@ -48,7 +48,8 @@ export interface Finding {
   explanation: string
   anchor: FindingAnchor | null
   suggestedEdit: string | null
-  confidence: number
+  // 0–1, or null when the agent didn't give a usable value.
+  confidence: number | null
 }
 
 export interface ReviewAgent {

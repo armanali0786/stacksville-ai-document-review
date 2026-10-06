@@ -1,0 +1,134 @@
+{
+  "documentId": "msa-northwind-brightline-2026",
+  "agent": { "name": "Contract Review Agent (messy sample)" },
+  "generatedAt": "not-a-date",
+  "findings": [
+    {
+      "id": "m-clean",
+      "severity": "high",
+      "category": "Liability",
+      "title": "Clean anchor for comparison",
+      "explanation": "Offsets and quote agree, so this highlights exactly.",
+      "anchor": { "paragraphId": "p-9.2", "start": 81, "end": 199, "quote": "SHALL NOT EXCEED THE FEES PAID BY CUSTOMER TO VENDOR IN THE ONE (1) MONTH PRECEDING THE EVENT GIVING RISE TO THE CLAIM" },
+      "suggestedEdit": "SHALL NOT EXCEED THE FEES PAID OR PAYABLE BY CUSTOMER TO VENDOR IN THE TWELVE (12) MONTHS PRECEDING THE EVENT GIVING RISE TO THE CLAIM",
+      "confidence": 0.92
+    },
+    {
+      "id": "m-clean",
+      "severity": "HIGH",
+      "category": "Liability",
+      "title": "Duplicate id and upper-case severity",
+      "explanation": "The id repeats the previous finding and severity is upper case; both are normalized.",
+      "anchor": { "paragraphId": "p-9.1", "start": 0, "end": 153, "quote": "IN NO EVENT SHALL VENDOR BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, INCLUDING LOSS OF PROFITS, REVENUE, OR DATA" },
+      "suggestedEdit": null,
+      "confidence": 84
+    },
+    {
+      "id": "m-unknown-paragraph",
+      "severity": "high",
+      "category": "Payment",
+      "title": "Paragraph id does not exist",
+      "explanation": "Points at p-99, but the quote exists in §4.4, so the highlight is relocated there.",
+      "anchor": { "paragraphId": "p-99", "start": 0, "end": 108, "quote": "Vendor may increase the fees for any Services at any time upon thirty (30) days’ written notice to Customer." },
+      "suggestedEdit": null,
+      "confidence": 0.9
+    },
+    {
+      "id": "m-quote-missing",
+      "severity": "medium",
+      "category": "Indemnification",
+      "title": "Quote is not in the document",
+      "explanation": "Neither the offsets nor the quote match anything, so nothing is highlighted and the finding is listed above the document.",
+      "anchor": { "paragraphId": "p-2.1", "start": 10, "end": 60, "quote": "Vendor shall indemnify Customer for all losses of any kind" },
+      "suggestedEdit": "",
+      "confidence": "very high"
+    },
+    {
+      "id": "m-string-offsets",
+      "severity": "low",
+      "category": "Subcontracting",
+      "title": "Offsets given as strings",
+      "explanation": "start and end are strings; they are coerced to numbers and the quote still matches.",
+      "anchor": { "paragraphId": "p-2.3", "start": "0", "end": "121", "quote": "Vendor may engage subcontractors to perform any portion of the Services without prior notice to or consent from Customer." },
+      "suggestedEdit": null,
+      "confidence": 0.68
+    },
+    {
+      "id": "m-reversed-offsets",
+      "severity": "medium",
+      "category": "Warranties",
+      "title": "Start is after end",
+      "explanation": "Reversed offsets are invalid, so the quote is located instead.",
+      "anchor": { "paragraphId": "p-7.1", "start": 294, "end": 132, "quote": "Customer’s sole and exclusive remedy, and Vendor’s sole obligation, for any breach of this warranty shall be for Vendor to re-perform the non-conforming Services." },
+      "suggestedEdit": null,
+      "confidence": -1
+    },
+    {
+      "id": "m-out-of-range",
+      "severity": "low",
+      "category": "Insurance",
+      "title": "End offset past the paragraph",
+      "explanation": "The end offset is far beyond the text; the quote is found and used instead.",
+      "anchor": { "paragraphId": "p-10.2", "start": 50, "end": 9999, "quote": "certificates of insurance" },
+      "suggestedEdit": null,
+      "confidence": 0.5
+    },
+    {
+      "id": "m-overlap-a",
+      "severity": "medium",
+      "category": "Consistency",
+      "title": "Overlaps the next finding",
+      "explanation": "Two findings share part of §4.3.",
+      "anchor": { "paragraphId": "p-4.3", "start": 0, "end": 120, "quote": "Any amount not paid within fifteen (15) days after the invoice date shall accrue interest at a rate of one and one-half" },
+      "suggestedEdit": null,
+      "confidence": 0.95
+    },
+    {
+      "id": "m-overlap-b",
+      "severity": "high",
+      "category": "Payment",
+      "title": "Overlaps the previous finding",
+      "explanation": "Starts inside the previous finding's span.",
+      "anchor": { "paragraphId": "p-4.3", "start": 67, "end": 160, "quote": " shall accrue interest at a rate of one and one-half percent (1.5%) per month, or the maximum" },
+      "suggestedEdit": null,
+      "confidence": 0.8
+    },
+    {
+      "id": "m-bad-end-paragraph",
+      "severity": "medium",
+      "category": "Confidentiality",
+      "title": "endParagraphId points nowhere",
+      "explanation": "The span claims to continue into p-404; it is treated as a single-paragraph anchor.",
+      "anchor": { "paragraphId": "p-5.4", "endParagraphId": "p-404", "start": 40, "end": 145, "quote": "continue  for a period of one (1) year\nfollowing the disclosure of the applicable Confidential Information" },
+      "suggestedEdit": null,
+      "confidence": 0.83
+    },
+    {
+      "severity": "Critical",
+      "explanation": "No id, no title, no category and an unknown severity. The explanation doubles as the title.",
+      "anchor": { "paragraphId": "p-11.2", "start": 0, "end": 94, "quote": "Vendor may assign or transfer this Agreement, in whole or in part, without Customer’s consent." }
+    },
+    {
+      "id": "m-anchor-string",
+      "severity": "low",
+      "category": "Termination",
+      "title": "Anchor is a plain string",
+      "explanation": "The anchor isn't an object, so it can't be located and is listed above the document.",
+      "anchor": "p-3.1",
+      "suggestedEdit": null,
+      "confidence": 0.4
+    },
+    {
+      "id": "m-no-anchor-field",
+      "severity": "high",
+      "category": "Data Protection",
+      "title": "Anchor field missing",
+      "explanation": "With no anchor at all, the finding is treated as being about the whole document.",
+      "suggestedEdit": null,
+      "confidence": 0.87
+    },
+    null,
+    "not a finding",
+    42
+  ]
+}

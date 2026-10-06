@@ -3,12 +3,14 @@ import type { ReviewSummary } from '../utils/summary'
 
 export function ReviewProgress({ summary }: { summary: ReviewSummary }) {
   const percent = summary.total === 0 ? 100 : Math.round((summary.reviewed / summary.total) * 100)
-  const isComplete = summary.pending === 0
+  const isComplete = summary.total > 0 && summary.pending === 0
 
   return (
     <div className={`review-progress${isComplete ? ' is-complete' : ''}`}>
       <span className="progress-label">
-        {isComplete ? (
+        {summary.total === 0 ? (
+          'Nothing to review'
+        ) : isComplete ? (
           <>
             <CircleCheck size={16} aria-hidden="true" />
             Review complete

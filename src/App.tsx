@@ -1,3 +1,4 @@
+import { RotateCcw, TriangleAlert } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { DocumentSkeleton } from './components/DocumentViewer'
 import { Header } from './components/Header'
@@ -7,10 +8,11 @@ import { loadReviewData, type ReviewData } from './data/loadReviewData'
 type LoadState =
   | { status: 'loading' }
   | { status: 'ready'; data: ReviewData }
-  | { status: 'error' }
+  | { status: 'error'; message: string }
 
 export function App() {
   const [loadState, setLoadState] = useState<LoadState>({ status: 'loading' })
+  const [attempt, setAttempt] = useState(0)
 
   useEffect(() => {
     let cancelled = false
@@ -19,14 +21,20 @@ export function App() {
       .then((data) => {
         if (!cancelled) setLoadState({ status: 'ready', data })
       })
-      .catch(() => {
-        if (!cancelled) setLoadState({ status: 'error' })
+      .catch((error: unknown) => {
+        const message = error instanceof Error ? error.message : 'Unknown error'
+        if (!cancelled) setLoadState({ status: 'error', message })
       })
 
     return () => {
       cancelled = true
     }
-  }, [])
+  }, [attempt])
+
+  function handleRetry() {
+    setLoadState({ status: 'loading' })
+    setAttempt((count) => count + 1)
+  }
 
   return (
     <div className="app">
@@ -35,20 +43,28 @@ export function App() {
       ) : (
         <>
           <Header />
-          <div className="workspace">
-            <aside className="findings-panel" aria-label="Review findings">
-              {loadState.status === 'loading' && <FindingListSkeleton />}
-            </aside>
-            <main className="document-pane">
-              {loadState.status === 'loading' ? (
+          {loadState.status === 'loading' ? (
+            <div className="workspace" aria-busy="true">
+              <aside className="findings-panel" aria-label="Review findings">
+                <FindingListSkeleton />
+              </aside>
+              <main className="document-pane">
                 <DocumentSkeleton />
-              ) : (
-                <p className="pane-message" role="alert">
-                  The document couldn’t be loaded. Please refresh to try again.
-                </p>
-              )}
+              </main>
+            </div>
+          ) : (
+            <main className="document-pane">
+              <div className="load-error" role="alert">
+                <TriangleAlert size={24} aria-hidden="true" />
+                <p className="empty-title">The review couldn’t be loaded</p>
+                <p className="empty-text">{loadState.message}. Your saved decisions are safe.</p>
+                <button type="button" className="button button-primary" onClick={handleRetry}>
+                  <RotateCcw size={14} aria-hidden="true" />
+                  Try again
+                </button>
+              </div>
             </main>
-          </div>
+          )}
         </>
       )}
     </div>

@@ -51,7 +51,8 @@ export function FindingList({
           </span>
         </h2>
         <p className="panel-subtitle">
-          {agent.name} · v{agent.version}
+          {agent.name}
+          {agent.version && ` · v${agent.version}`}
         </p>
       </header>
 
