@@ -9,10 +9,10 @@ export function DocumentViewer({ contract }: DocumentViewerProps) {
   return (
     <article className="document" aria-labelledby="document-title">
       <header className="document-header">
+        <p className="document-eyebrow">Effective {formatDate(contract.effectiveDate)}</p>
         <h1 id="document-title" className="document-title">
           {contract.title}
         </h1>
-        <p className="document-meta">Effective {formatDate(contract.effectiveDate)}</p>
         <ul className="document-parties">
           {contract.parties.map((party) => (
             <li key={party.role}>
