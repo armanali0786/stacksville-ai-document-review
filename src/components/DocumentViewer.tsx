@@ -7,16 +7,24 @@ interface DocumentViewerProps {
   contract: Contract
   annotations: DocumentAnnotations
   reviewState: ReviewState
+  // Highlights follow the list filters so the document shows the same subset the reviewer is focused on.
+  visibleFindingIds: Set<string>
   selectedFindingId: string | null
   onSelect: (findingId: string) => void
 }
 
 const NO_RANGES: TextRange[] = []
 
+function visibleRanges(ranges: TextRange[] | undefined, visibleFindingIds: Set<string>) {
+  if (!ranges) return NO_RANGES
+  return ranges.filter((range) => visibleFindingIds.has(range.findingId))
+}
+
 export function DocumentViewer({
   contract,
   annotations,
   reviewState,
+  visibleFindingIds,
   selectedFindingId,
   onSelect,
 }: DocumentViewerProps) {
@@ -41,7 +49,7 @@ export function DocumentViewer({
       </header>
 
       <UnanchoredFindings
-        findings={annotations.unanchoredFindings}
+        findings={annotations.unanchoredFindings.filter((f) => visibleFindingIds.has(f.id))}
         anchors={annotations.anchors}
         reviewState={reviewState}
         selectedFindingId={selectedFindingId}
@@ -58,7 +66,7 @@ export function DocumentViewer({
             <DocumentParagraph
               key={paragraph.id}
               paragraph={paragraph}
-              ranges={annotations.rangesByParagraph.get(paragraph.id) ?? NO_RANGES}
+              ranges={visibleRanges(annotations.rangesByParagraph.get(paragraph.id), visibleFindingIds)}
               findingsById={annotations.findingsById}
               reviewState={reviewState}
               selectedFindingId={selectedFindingId}

@@ -10,6 +10,7 @@ interface FindingCardProps {
   locationLabel: string
   review: FindingReview
   isSelected: boolean
+  isOutsideFilters: boolean
   onSelect: (findingId: string) => void
   onStatusChange: (findingId: string, status: ReviewStatus) => void
   onCommentChange: (findingId: string, comment: string) => void
@@ -21,6 +22,7 @@ export function FindingCard({
   locationLabel,
   review,
   isSelected,
+  isOutsideFilters,
   onSelect,
   onStatusChange,
   onCommentChange,
@@ -58,6 +60,9 @@ export function FindingCard({
 
       {isSelected && (
         <div id={detailsId}>
+          {isOutsideFilters && (
+            <p className="outside-filters">Doesn’t match your filters. It will hide when you move on.</p>
+          )}
           <FindingDetails
             finding={finding}
             anchorStatus={anchorStatus}

@@ -3,6 +3,7 @@ import type { Contract, Finding, FindingAnchor, Paragraph, Section } from '../ty
 export interface ParagraphEntry {
   paragraph: Paragraph
   section: Section
+  order: number
 }
 
 export type ParagraphIndex = Map<string, ParagraphEntry>
@@ -37,7 +38,7 @@ export function buildParagraphIndex(contract: Contract): ParagraphIndex {
   const index: ParagraphIndex = new Map()
   for (const section of contract.sections) {
     for (const paragraph of section.paragraphs) {
-      index.set(paragraph.id, { paragraph, section })
+      index.set(paragraph.id, { paragraph, section, order: index.size })
     }
   }
   return index
@@ -128,6 +129,8 @@ export interface DocumentAnnotations {
   findingsById: Map<string, Finding>
   // Findings with nothing to highlight: document-level ones and anchors we couldn't place.
   unanchoredFindings: Finding[]
+  // Where each finding starts in reading order; unanchored findings sort first, like their banner.
+  documentPosition: Map<string, number>
 }
 
 // Everything the UI needs to connect findings and text, derived once when data loads.
@@ -141,6 +144,13 @@ export function buildDocumentAnnotations(contract: Contract, findings: Finding[]
     rangesByParagraph: groupRangesByParagraph(anchors.values()),
     findingsById: new Map(findings.map((finding) => [finding.id, finding])),
     unanchoredFindings: findings.filter((finding) => anchors.get(finding.id)?.ranges.length === 0),
+    documentPosition: new Map(
+      findings.map((finding) => {
+        const first = anchors.get(finding.id)?.ranges[0]
+        const order = first ? paragraphs.get(first.paragraphId)?.order : undefined
+        return [finding.id, order === undefined || !first ? -1 : order * 100_000 + first.start]
+      }),
+    ),
   }
 }
 
