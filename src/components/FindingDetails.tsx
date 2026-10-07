@@ -1,6 +1,6 @@
 import { Check, FileText, RotateCcw, X } from 'lucide-react'
 import type { ReactNode } from 'react'
-import type { Finding, FindingReview, ReviewStatus } from '../types/review'
+import { STATUS_LABELS, type Finding, type FindingReview, type ReviewStatus } from '../types/review'
 import type { AnchorStatus } from '../utils/annotations'
 import { CommentBox } from './CommentBox'
 import { SuggestedEdit } from './SuggestedEdit'
@@ -74,7 +74,7 @@ function ReviewActions({
       <div className="review-actions">
         <span className={`review-outcome is-${status}`}>
           {status === 'accepted' ? <Check size={14} aria-hidden="true" /> : <X size={14} aria-hidden="true" />}
-          {status === 'accepted' ? 'Accepted' : 'Dismissed'}
+          {STATUS_LABELS[status]}
         </span>
         <button type="button" className="button button-ghost" onClick={() => onStatusChange('pending')}>
           <RotateCcw size={14} aria-hidden="true" />

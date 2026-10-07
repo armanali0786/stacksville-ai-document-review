@@ -1,6 +1,6 @@
 import { Check, X } from 'lucide-react'
 import { useEffect } from 'react'
-import type { ReviewStatus } from '../types/review'
+import { STATUS_LABELS, type ReviewStatus } from '../types/review'
 
 export interface ReviewAction {
   findingId: string
@@ -30,7 +30,7 @@ export function ActionToast({ action, onUndo, onClose }: ActionToastProps) {
         <div className="toast" key={`${action.findingId}-${action.status}`}>
           {action.status === 'accepted' ? <Check size={16} aria-hidden="true" /> : <X size={16} aria-hidden="true" />}
           <span className="toast-text">
-            {action.status === 'accepted' ? 'Accepted' : 'Dismissed'}: <strong>{action.title}</strong>
+            {STATUS_LABELS[action.status]}: <strong>{action.title}</strong>
           </span>
           <button type="button" className="toast-undo" aria-keyshortcuts="U" onClick={() => onUndo(action)}>
             Undo{' '}

@@ -1,4 +1,11 @@
-import { REVIEW_STATUSES, SEVERITIES, SEVERITY_LABELS, type Finding, type ReviewState } from '../types/review'
+import {
+  REVIEW_STATUSES,
+  SEVERITIES,
+  SEVERITY_LABELS,
+  STATUS_LABELS,
+  type Finding,
+  type ReviewState,
+} from '../types/review'
 import { filterFindings, hasActiveFilters, type Filters, type SortOrder } from '../utils/filters'
 
 interface FindingFiltersProps {
@@ -8,7 +15,7 @@ interface FindingFiltersProps {
   onChange: (filters: Filters) => void
 }
 
-const STATUS_LABELS = { all: 'All', pending: 'Pending', accepted: 'Accepted', dismissed: 'Dismissed' }
+const FILTER_LABELS = { all: 'All', ...STATUS_LABELS }
 
 export function FindingFilters({ findings, reviewState, filters, onChange }: FindingFiltersProps) {
   const categories = [...new Set(findings.map((finding) => finding.category))].sort()
@@ -36,7 +43,7 @@ export function FindingFilters({ findings, reviewState, filters, onChange }: Fin
             aria-pressed={filters.status === status}
             onClick={() => onChange({ ...filters, status })}
           >
-            {STATUS_LABELS[status]}
+            {FILTER_LABELS[status]}
             <span className="filter-count">{countWith({ status })}</span>
           </button>
         ))}

@@ -94,7 +94,8 @@ function findQuote(
   if (!quote.trim()) return null
 
   const preferred = paragraphs.get(anchor.paragraphId)
-  const candidates = preferred ? [preferred, ...paragraphs.values()] : [...paragraphs.values()]
+  const others = [...paragraphs.values()].filter((entry) => entry !== preferred)
+  const candidates = preferred ? [preferred, ...others] : others
 
   for (const { paragraph } of candidates) {
     const start = findClosestOccurrence(paragraph.text, quote, anchor.start)

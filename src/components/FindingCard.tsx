@@ -1,5 +1,5 @@
 import { Check, ChevronDown, MessageSquare, TriangleAlert, X } from 'lucide-react'
-import type { Finding, FindingReview, ReviewStatus } from '../types/review'
+import { STATUS_LABELS, type Finding, type FindingReview, type ReviewStatus } from '../types/review'
 import type { AnchorStatus } from '../utils/annotations'
 import { FindingDetails } from './FindingDetails'
 import { SeverityBadge } from './SeverityBadge'
@@ -86,7 +86,7 @@ function StatusTag({ status }: { status: ReviewStatus }) {
   return (
     <span className={`status-tag is-${status}`}>
       {status === 'accepted' ? <Check size={12} aria-hidden="true" /> : <X size={12} aria-hidden="true" />}
-      {status === 'accepted' ? 'Accepted' : 'Dismissed'}
+      {STATUS_LABELS[status]}
     </span>
   )
 }

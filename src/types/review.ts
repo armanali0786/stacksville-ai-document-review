@@ -68,6 +68,12 @@ export type ReviewStatus = 'pending' | 'accepted' | 'dismissed'
 
 export const REVIEW_STATUSES: ReviewStatus[] = ['pending', 'accepted', 'dismissed']
 
+export const STATUS_LABELS: Record<ReviewStatus, string> = {
+  pending: 'Pending',
+  accepted: 'Accepted',
+  dismissed: 'Dismissed',
+}
+
 export interface FindingReview {
   status: ReviewStatus
   comment?: string
