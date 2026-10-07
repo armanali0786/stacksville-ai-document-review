@@ -23,10 +23,10 @@ export function UnanchoredFindings({
 
   return (
     <section className="unanchored" aria-labelledby="unanchored-heading">
-      <h2 id="unanchored-heading" className="unanchored-heading">
+      <h3 id="unanchored-heading" className="unanchored-heading">
         <FileWarning size={16} aria-hidden="true" />
         {findings.length === 1 ? '1 finding' : `${findings.length} findings`} without a highlight
-      </h2>
+      </h3>
       <ul className="unanchored-items">
         {findings.map((finding) => {
           const isDocumentLevel = anchors.get(finding.id)?.status === 'document'

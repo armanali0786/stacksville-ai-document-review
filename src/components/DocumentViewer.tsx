@@ -35,9 +35,9 @@ export function DocumentViewer({
     >
       <header className="document-header">
         <p className="document-eyebrow">Effective {formatDate(contract.effectiveDate)}</p>
-        <h1 id="document-title" className="document-title">
+        <h2 id="document-title" className="document-title">
           {contract.title}
-        </h1>
+        </h2>
         <ul className="document-parties">
           {contract.parties.map((party) => (
             <li key={party.role}>
@@ -58,10 +58,10 @@ export function DocumentViewer({
 
       {contract.sections.map((section) => (
         <section key={section.id} className="document-section" aria-labelledby={`${section.id}-heading`}>
-          <h2 id={`${section.id}-heading`} className="section-heading">
+          <h3 id={`${section.id}-heading`} className="section-heading">
             {section.number && <span className="section-number">{section.number}.</span>}
             {section.heading}
-          </h2>
+          </h3>
           {section.paragraphs.map((paragraph) => (
             <DocumentParagraph
               key={paragraph.id}

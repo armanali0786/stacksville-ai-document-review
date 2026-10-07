@@ -38,6 +38,9 @@ export function App() {
 
   return (
     <div className="app">
+      <a className="skip-link" href="#document-pane">
+        Skip to document
+      </a>
       {loadState.status === 'ready' ? (
         <ReviewWorkspace data={loadState.data} />
       ) : (
@@ -48,15 +51,15 @@ export function App() {
               <aside className="findings-panel" aria-label="Review findings">
                 <FindingListSkeleton />
               </aside>
-              <main className="document-pane">
+              <main id="document-pane" className="document-pane">
                 <DocumentSkeleton />
               </main>
             </div>
           ) : (
-            <main className="document-pane">
+            <main id="document-pane" className="document-pane" tabIndex={-1}>
               <div className="load-error" role="alert">
                 <TriangleAlert size={24} aria-hidden="true" />
-                <p className="empty-title">The review couldn’t be loaded</p>
+                <h1 className="empty-title">The review couldn’t be loaded</h1>
                 <p className="empty-text">{loadState.message}. Your saved decisions are safe.</p>
                 <button type="button" className="button button-primary" onClick={handleRetry}>
                   <RotateCcw size={14} aria-hidden="true" />

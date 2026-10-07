@@ -100,6 +100,9 @@ body {
 }
 
 .header-document {
+  margin: 0;
+  font-weight: 400;
+  line-height: 20px;
   padding-left: var(--space-4);
   border-left: 1px solid var(--color-hairline);
   font-size: 14px;
@@ -1026,6 +1029,7 @@ body {
 .empty-title {
   margin: var(--space-2) 0 0;
   font-size: 14px;
+  line-height: 20px;
   font-weight: 600;
   color: var(--color-ink);
 }
@@ -1332,8 +1336,131 @@ body {
   }
 }
 
+/* Toast: confirms each decision and offers a quick undo */
+
+.toast-region {
+  position: fixed;
+  bottom: var(--space-6);
+  left: 50%;
+  z-index: 20;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  max-width: min(520px, calc(100vw - 32px));
+  padding: var(--space-2) var(--space-2) var(--space-2) var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--color-ink);
+  color: #fff;
+  font-size: 14px;
+  line-height: 20px;
+  box-shadow: 0 2px 2px rgb(0 0 0 / 0.06), 0 8px 16px -4px rgb(0 0 0 / 0.24);
+  pointer-events: auto;
+  animation: toast-in 160ms ease-out;
+}
+
+.toast-text {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.toast-text strong {
+  font-weight: 500;
+}
+
+.toast-undo {
+  flex-shrink: 0;
+  height: 28px;
+  padding: 0 var(--space-3);
+  border: 1px solid rgb(255 255 255 / 0.24);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: #fff;
+  font: inherit;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.toast-undo:hover {
+  background: rgb(255 255 255 / 0.1);
+}
+
+.toast-undo:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+/* Details open with a short fade so the list doesn't jump abruptly */
+
+.finding-details {
+  animation: details-in 140ms ease-out;
+}
+
+@keyframes details-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+/* Accessibility helpers */
+
+:focus-visible {
+  outline: 2px solid var(--color-link);
+  outline-offset: 2px;
+}
+
+/* The document pane is focusable so keyboard users can scroll it; mouse focus stays quiet. */
+.document-pane:focus:not(:focus-visible) {
+  outline: none;
+}
+
+.document-pane:focus-visible {
+  outline-offset: -2px;
+}
+
+.skip-link {
+  position: absolute;
+  top: var(--space-2);
+  left: var(--space-2);
+  z-index: 30;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  background: var(--color-ink);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  transform: translateY(-200%);
+}
+
+.skip-link:focus {
+  transform: none;
+}
+
+/* Narrow-screen view switch (hidden on wide screens, where both panes fit) */
+
+.view-switch,
+.narrow-only {
+  display: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .skeleton-line {
+  .skeleton-line,
+  .toast,
+  .finding-details {
     animation: none;
   }
 
@@ -1346,15 +1473,77 @@ body {
   }
 }
 
+@media (max-width: 1100px) {
+  .workspace {
+    grid-template-columns: 360px 1fr;
+  }
+
+  .document {
+    padding: var(--space-10);
+  }
+}
+
 @media (max-width: 900px) {
+  .view-switch {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-1);
+    padding: var(--space-2) var(--space-4);
+    border-bottom: 1px solid var(--color-hairline);
+    background: var(--color-canvas);
+  }
+
+  .view-switch button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    height: 36px;
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--color-body);
+    font: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+
+  .view-switch button[aria-pressed='true'] {
+    border-color: var(--color-hairline);
+    background: var(--color-surface);
+    color: var(--color-ink);
+    box-shadow: var(--shadow-whisper);
+  }
+
+  .narrow-only {
+    display: inline-flex;
+  }
+
   .workspace {
     grid-template-columns: 1fr;
-    grid-template-rows: minmax(0, 45%) minmax(0, 1fr);
   }
 
   .findings-panel {
     border-right: 0;
-    border-bottom: 1px solid var(--color-hairline);
+  }
+
+  .workspace.show-findings .document-pane,
+  .workspace.show-document .findings-panel {
+    display: none;
+  }
+
+  .finding-list {
+    padding-top: var(--space-4);
+  }
+
+  .risk-summary {
+    margin-top: var(--space-4);
+  }
+
+  /* Keep the last card clear of the toast. */
+  .finding-items {
+    padding-bottom: var(--space-16);
   }
 }
 
@@ -1363,8 +1552,13 @@ body {
     padding: 0 var(--space-4);
   }
 
+  .document-pane {
+    padding: var(--space-4) var(--space-2) var(--space-16);
+  }
+
   .document {
-    padding: var(--space-8) var(--space-6);
+    padding: var(--space-6) var(--space-4);
+    font-size: 15px;
   }
 
   .document-title {
@@ -1374,12 +1568,35 @@ body {
   }
 
   .paragraph {
-    grid-template-columns: 36px 1fr;
+    grid-template-columns: 32px 1fr;
   }
 
-  .header-document,
+  .paragraph.is-active::before {
+    left: -10px;
+  }
+
   .progress-breakdown,
   .progress-track {
     display: none;
+  }
+
+  /* Still the page's h1 for screen readers, just not shown in the cramped header. */
+  .header-document {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .toast-region {
+    right: var(--space-4);
+    left: var(--space-4);
+    transform: none;
+  }
+
+  .toast {
+    max-width: none;
   }
 }

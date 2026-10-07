@@ -15,7 +15,7 @@ export function Header({ documentTitle, children }: HeaderProps) {
         </span>
         <span className="brand-name">Contract Review</span>
       </div>
-      {documentTitle && <span className="header-document">{documentTitle}</span>}
+      {documentTitle && <h1 className="header-document">{documentTitle}</h1>}
       {children && <div className="header-end">{children}</div>}
     </header>
   )

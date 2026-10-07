@@ -14,6 +14,7 @@ interface FindingCardProps {
   onSelect: (findingId: string) => void
   onStatusChange: (findingId: string, status: ReviewStatus) => void
   onCommentChange: (findingId: string, comment: string) => void
+  onShowInDocument: (findingId: string) => void
 }
 
 export function FindingCard({
@@ -26,6 +27,7 @@ export function FindingCard({
   onSelect,
   onStatusChange,
   onCommentChange,
+  onShowInDocument,
 }: FindingCardProps) {
   const detailsId = `finding-${finding.id}-details`
 
@@ -34,6 +36,7 @@ export function FindingCard({
       id={`finding-${finding.id}`}
       className={`finding-card is-${review.status}${isSelected ? ' is-selected' : ''}`}
       aria-label={finding.title}
+      aria-current={isSelected ? 'true' : undefined}
     >
       <button
         type="button"
@@ -69,6 +72,7 @@ export function FindingCard({
             review={review}
             onStatusChange={(status) => onStatusChange(finding.id, status)}
             onCommentChange={(comment) => onCommentChange(finding.id, comment)}
+            onShowInDocument={() => onShowInDocument(finding.id)}
           />
         </div>
       )}

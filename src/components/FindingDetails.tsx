@@ -1,4 +1,4 @@
-import { Check, RotateCcw, X } from 'lucide-react'
+import { Check, FileText, RotateCcw, X } from 'lucide-react'
 import type { ReactNode } from 'react'
 import type { Finding, FindingReview, ReviewStatus } from '../types/review'
 import type { AnchorStatus } from '../utils/annotations'
@@ -10,6 +10,7 @@ interface FindingDetailsProps {
   review: FindingReview
   onStatusChange: (status: ReviewStatus) => void
   onCommentChange: (comment: string) => void
+  onShowInDocument: () => void
 }
 
 const ANCHOR_NOTES: Partial<Record<AnchorStatus, string>> = {
@@ -25,6 +26,7 @@ export function FindingDetails({
   review,
   onStatusChange,
   onCommentChange,
+  onShowInDocument,
 }: FindingDetailsProps) {
   const anchorNote = ANCHOR_NOTES[anchorStatus]
 
@@ -41,6 +43,12 @@ export function FindingDetails({
       )}
 
       {anchorNote && <p className={`finding-note is-${anchorStatus}`}>{anchorNote}</p>}
+
+      {/* Only visible on narrow screens, where the document is in a separate view. */}
+      <button type="button" className="button button-ghost narrow-only" onClick={onShowInDocument}>
+        <FileText size={14} aria-hidden="true" />
+        Show in document
+      </button>
 
       {finding.suggestedEdit && (
         <DetailBlock label="Suggested edit">

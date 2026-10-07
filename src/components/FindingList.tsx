@@ -22,6 +22,7 @@ interface FindingListProps {
   onClearFilters: () => void
   onStatusChange: (findingId: string, status: ReviewStatus) => void
   onCommentChange: (findingId: string, comment: string) => void
+  onShowInDocument: (findingId: string) => void
 }
 
 export function FindingList({
@@ -38,6 +39,7 @@ export function FindingList({
   onClearFilters,
   onStatusChange,
   onCommentChange,
+  onShowInDocument,
 }: FindingListProps) {
   const matchCount = findings.filter((finding) => finding.id !== outsideFilterId).length
 
@@ -93,6 +95,7 @@ export function FindingList({
                   onSelect={onSelect}
                   onStatusChange={onStatusChange}
                   onCommentChange={onCommentChange}
+                  onShowInDocument={onShowInDocument}
                 />
               </li>
             )
