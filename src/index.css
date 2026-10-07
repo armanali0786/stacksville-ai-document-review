@@ -1336,6 +1336,173 @@ body {
   }
 }
 
+/* Suggested edit diff */
+
+.suggestion-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.suggestion-header .detail-label {
+  margin-bottom: 0;
+}
+
+.mini-toggle {
+  display: inline-flex;
+  padding: 2px;
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-soft);
+}
+
+.mini-toggle button {
+  height: 22px;
+  padding: 0 var(--space-2);
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--color-body);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.mini-toggle button[aria-pressed='true'] {
+  background: var(--color-surface);
+  color: var(--color-ink);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.08);
+}
+
+/* Strike-through and underline carry the meaning too, so the diff never relies on color alone. */
+.finding-suggestion del {
+  background: var(--severity-high-soft);
+  color: var(--severity-high-text);
+  text-decoration: line-through;
+  text-decoration-thickness: 1px;
+}
+
+/* A replacement reads as "old → new", so keep the two halves visibly apart. */
+.finding-suggestion del + ins {
+  margin-left: 3px;
+}
+
+.finding-suggestion ins {
+  background: var(--severity-low-soft);
+  color: var(--severity-low-text);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+
+/* Keyboard hints and the shortcuts dialog */
+
+kbd,
+.key-hint {
+  display: inline-grid;
+  place-items: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border: 1px solid var(--color-hairline);
+  border-radius: 4px;
+  background: var(--color-surface);
+  color: var(--color-body);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.button-primary .key-hint,
+.toast-undo .key-hint {
+  border-color: rgb(255 255 255 / 0.3);
+  background: transparent;
+  color: #fff;
+}
+
+.button .key-hint {
+  margin-left: 2px;
+}
+
+.icon-button {
+  display: inline-grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-body);
+  cursor: pointer;
+}
+
+.icon-button:hover {
+  border-color: #d4d4d4;
+  color: var(--color-ink);
+}
+
+.shortcuts-button {
+  margin-left: var(--space-4);
+}
+
+.shortcuts-dialog {
+  width: min(400px, calc(100vw - 32px));
+  padding: var(--space-6);
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-ink);
+  box-shadow: 0 2px 2px rgb(0 0 0 / 0.04), 0 8px 16px -4px rgb(0 0 0 / 0.16);
+}
+
+.shortcuts-dialog::backdrop {
+  background: rgb(0 0 0 / 0.24);
+}
+
+.shortcuts-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-4);
+}
+
+.shortcuts-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 28px;
+  letter-spacing: -0.4px;
+}
+
+.shortcuts-list {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+}
+
+.shortcut-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--color-hairline);
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.shortcut-row dd {
+  margin: 0;
+}
+
+.shortcuts-note {
+  margin: var(--space-4) 0 0;
+  font-size: 12px;
+  color: var(--color-body);
+}
+
 /* Toast: confirms each decision and offers a quick undo */
 
 .toast-region {
@@ -1518,6 +1685,12 @@ body {
 
   .narrow-only {
     display: inline-flex;
+  }
+
+  /* Narrow screens are mostly touch, where key hints are just noise. */
+  .key-hint,
+  .shortcuts-button {
+    display: none;
   }
 
   .workspace {

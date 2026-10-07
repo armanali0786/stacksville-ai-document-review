@@ -3,6 +3,7 @@ import type { ReactNode } from 'react'
 import type { Finding, FindingReview, ReviewStatus } from '../types/review'
 import type { AnchorStatus } from '../utils/annotations'
 import { CommentBox } from './CommentBox'
+import { SuggestedEdit } from './SuggestedEdit'
 
 interface FindingDetailsProps {
   finding: Finding
@@ -51,9 +52,7 @@ export function FindingDetails({
       </button>
 
       {finding.suggestedEdit && (
-        <DetailBlock label="Suggested edit">
-          <p className="finding-suggestion">{finding.suggestedEdit}</p>
-        </DetailBlock>
+        <SuggestedEdit quote={finding.anchor?.quote ?? ''} suggestedEdit={finding.suggestedEdit} />
       )}
 
       <CommentBox findingId={finding.id} comment={review.comment} onSave={onCommentChange} />
@@ -87,13 +86,29 @@ function ReviewActions({
 
   return (
     <div className="review-actions">
-      <button type="button" className="button button-primary" onClick={() => onStatusChange('accepted')}>
+      <button
+        type="button"
+        className="button button-primary"
+        aria-keyshortcuts="A"
+        onClick={() => onStatusChange('accepted')}
+      >
         <Check size={14} aria-hidden="true" />
         Accept
+        <kbd className="key-hint" aria-hidden="true">
+          A
+        </kbd>
       </button>
-      <button type="button" className="button button-ghost" onClick={() => onStatusChange('dismissed')}>
+      <button
+        type="button"
+        className="button button-ghost"
+        aria-keyshortcuts="D"
+        onClick={() => onStatusChange('dismissed')}
+      >
         <X size={14} aria-hidden="true" />
         Dismiss
+        <kbd className="key-hint" aria-hidden="true">
+          D
+        </kbd>
       </button>
     </div>
   )

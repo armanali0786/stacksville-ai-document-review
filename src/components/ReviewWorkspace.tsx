@@ -1,7 +1,8 @@
-import { FileText, ListChecks } from 'lucide-react'
+import { FileText, Keyboard, ListChecks } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { ReviewData } from '../data/loadReviewData'
 import { useFindingSelection } from '../hooks/useFindingSelection'
+import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts'
 import { useReviewState } from '../hooks/useReviewState'
 import type { ReviewStatus } from '../types/review'
 import { buildDocumentAnnotations } from '../utils/annotations'
@@ -14,6 +15,7 @@ import { FindingList } from './FindingList'
 import { Header } from './Header'
 import { ReviewProgress } from './ReviewProgress'
 import { RiskSummary } from './RiskSummary'
+import { ShortcutsDialog } from './ShortcutsDialog'
 
 interface ReviewWorkspaceProps {
   data: ReviewData
@@ -30,6 +32,7 @@ export function ReviewWorkspace({ data }: ReviewWorkspaceProps) {
   const [filters, setFilters] = useState(DEFAULT_FILTERS)
   const [lastAction, setLastAction] = useState<ReviewAction | null>(null)
   const [narrowView, setNarrowView] = useState<NarrowView>('findings')
+  const [showShortcuts, setShowShortcuts] = useState(false)
   const closeToast = useCallback(() => setLastAction(null), [])
 
   useEffect(() => {
@@ -68,6 +71,25 @@ export function ReviewWorkspace({ data }: ReviewWorkspaceProps) {
     goToFinding(action.findingId)
   }
 
+  // Steps through the list as it's currently filtered and sorted, stopping at either end.
+  function moveSelection(step: 1 | -1) {
+    if (visibleFindings.length === 0) return
+    const index = visibleFindings.findIndex((f) => f.id === selectedFindingId)
+    const next = index === -1 ? (step === 1 ? 0 : visibleFindings.length - 1) : index + step
+    const target = visibleFindings[Math.min(Math.max(next, 0), visibleFindings.length - 1)]
+    goToFinding(target.id)
+  }
+
+  useKeyboardShortcuts({
+    j: () => moveSelection(1),
+    k: () => moveSelection(-1),
+    a: () => selectedFindingId && handleStatusChange(selectedFindingId, 'accepted'),
+    d: () => selectedFindingId && handleStatusChange(selectedFindingId, 'dismissed'),
+    u: () => lastAction && handleUndo(lastAction),
+    Escape: () => goToFinding(null),
+    '?': () => setShowShortcuts(true),
+  })
+
   function handleDocumentSelect(findingId: string) {
     setNarrowView('findings')
     selectFromDocument(findingId)
@@ -88,6 +110,16 @@ export function ReviewWorkspace({ data }: ReviewWorkspaceProps) {
     <>
       <Header documentTitle={contract.title}>
         <ReviewProgress summary={summary} />
+        <button
+          type="button"
+          className="icon-button shortcuts-button"
+          aria-label="Keyboard shortcuts"
+          aria-keyshortcuts="?"
+          title="Keyboard shortcuts (?)"
+          onClick={() => setShowShortcuts(true)}
+        >
+          <Keyboard size={16} aria-hidden="true" />
+        </button>
       </Header>
       <nav className="view-switch" aria-label="Switch view">
         <button type="button" aria-pressed={narrowView === 'findings'} onClick={() => setNarrowView('findings')}>
@@ -142,6 +174,7 @@ export function ReviewWorkspace({ data }: ReviewWorkspaceProps) {
         </section>
       </main>
       <ActionToast action={lastAction} onUndo={handleUndo} onClose={closeToast} />
+      <ShortcutsDialog open={showShortcuts} onClose={() => setShowShortcuts(false)} />
     </>
   )
 }

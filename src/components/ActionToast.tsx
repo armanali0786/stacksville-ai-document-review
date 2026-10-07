@@ -32,8 +32,11 @@ export function ActionToast({ action, onUndo, onClose }: ActionToastProps) {
           <span className="toast-text">
             {action.status === 'accepted' ? 'Accepted' : 'Dismissed'}: <strong>{action.title}</strong>
           </span>
-          <button type="button" className="toast-undo" onClick={() => onUndo(action)}>
-            Undo
+          <button type="button" className="toast-undo" aria-keyshortcuts="U" onClick={() => onUndo(action)}>
+            Undo{' '}
+            <kbd className="key-hint" aria-hidden="true">
+              U
+            </kbd>
           </button>
         </div>
       )}
